@@ -1,4 +1,4 @@
-import { router, publicProcedure } from "../trpc";
+import { router, publicProcedure, protectedProcedure } from "../trpc";
 import { z } from "zod";
 
 export const exampleRouter = router({
@@ -6,10 +6,16 @@ export const exampleRouter = router({
     .input(z.object({ text: z.string().nullish() }).nullish())
     .query(({ input }) => {
       return {
-        greeting: `Hello ${input?.text ?? "world"}`,
+        greeting: `hi ${input?.text ?? "world"}`,
       };
     }),
+
   getAll: publicProcedure.query(({ ctx }) => {
     return ctx.prisma.example.findMany();
+  }),
+  world: protectedProcedure.query(({ ctx }) => {
+    return {
+      message: "hello from the server",
+    };
   }),
 });
